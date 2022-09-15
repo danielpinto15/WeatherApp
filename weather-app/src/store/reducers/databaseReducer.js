@@ -14,7 +14,6 @@ export default (state = initialState, action) => {
             };
         case SET_ERROR:
             return {
-                //DP - try to do the same above
                 ...state,
                 error: action.payload,
             };

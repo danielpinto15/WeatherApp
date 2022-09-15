@@ -1,0 +1,67 @@
+{
+  "citys": [
+    {
+      "name": "Porto",
+      "country": "PT",
+      "temp_max": "23",
+      "temp_min": "20",
+      "id": 1
+    },
+    {
+      "city": "Faro",
+      "country": "PT",
+      "temp_max": 23,
+      "temp_min": 21,
+      "icon": "02d",
+      "id": 2
+    },
+    {
+      "city": "Faro",
+      "country": "PT",
+      "temp_max": 23,
+      "temp_min": 21,
+      "icon": "02d",
+      "id": 3
+    },
+    {
+      "city": "Alfena",
+      "country": "PT",
+      "temp_max": 20,
+      "temp_min": 19,
+      "icon": "03d",
+      "id": 4
+    },
+    {
+      "city": "Alfena",
+      "country": "PT",
+      "temp_max": 20,
+      "temp_min": 19,
+      "icon": "03d",
+      "id": 5
+    },
+    {
+      "city": "Maia",
+      "country": "PT",
+      "temp_max": 20,
+      "temp_min": 19,
+      "icon": "03d",
+      "id": 6
+    },
+    {
+      "city": "Valongo",
+      "country": "PT",
+      "temp_max": 20,
+      "temp_min": 19,
+      "icon": "03d",
+      "id": 7
+    },
+    {
+      "city": "Porto",
+      "country": "PT",
+      "temp_max": 20,
+      "temp_min": 19,
+      "icon": "03d",
+      "id": 8
+    }
+  ]
+}

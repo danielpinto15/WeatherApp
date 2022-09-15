@@ -1,16 +1,11 @@
 import React, { useEffect } from 'react';
 import Weather from './components/Weather';
 import { Container } from '@mui/system';
-import Masonry from '@mui/lab/Masonry';
-import { Box, Button, Typography } from "@material-ui/core";
+import { Box, Button, Typography, Grid } from "@material-ui/core";
 import Search from './components/Search';
+import Forecast from './components/Forecast';
 
 function App() {
-  const breakpoints = {
-    default: 3,
-    1100: 2,
-    700: 1
-  }
   return (
     <Container maxWidth='lg'>
       <Box sx={{ bgcolor: '#cfe8fc', height: '100vh'  }}>
@@ -26,15 +21,12 @@ function App() {
         <Box>
           <Search />
         </Box>
-        <Masonry
-          breakpointcols={breakpoints}
-          className='my-masonry-grid'
-          columnclassname='my-masonry-grid_column'
-        >
-          <Box mt={2}>
+        <Grid container justifyContent="center" mt={2} mb={2}>
             <Weather />
-          </Box>
-        </Masonry>
+        </Grid>
+        <Box sx={{ m: 2 }}>
+          <Forecast />
+        </Box>
       </Box>
     </Container>
   );
