@@ -1,60 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, TextField } from "@material-ui/core";
-import Stack from '@mui/material/Stack';
-import { getWeatherInfo } from '../store/actions/weatherActions';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { Box, Button, TextField } from "@mui/material";
+import { getWeatherInfo, setData } from "../store/actions/actions";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Search() {
   const dispatch = useDispatch();
-  const state = useSelector(state => state);
+  const state = useSelector((state) => state);
   const [city, setCity] = useState('');
-  const [country, setCountry] = useState('');
-  const [temp_max, setTemp_Max] = useState('');
-  const [temp_min, setTemp_min] = useState('');
-  const [icon, setIcon] = useState('');
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(getWeatherInfo(e.target[0].value));
-    setCity(e.target[0].value)
+
+  const onEnterCity = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      dispatch(getWeatherInfo(city));
+    }
+  };
+
+  const onChangeCity = (e) => {
+    setCity(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    dispatch(getWeatherInfo(city));
   };
 
   useEffect(() => {
-    if(Object.entries(state).length === 0) {
-      setCountry(state.data.sys.country)
-      setTemp_Max(Math.floor(state.data.main.temp_max))
-      setTemp_min(Math.floor(state.data.main.temp_min))
-      setIcon(state.data.weather[0].icon)
+    if (state.todayWeatherData != null) {
+      const country = state.todayWeatherData.sys.country;
+      const tempMax = Math.floor(state.todayWeatherData.main.temp_max);
+      const tempMin = Math.floor(state.todayWeatherData.main.temp_min);
+      const icon = state.todayWeatherData.weather[0].icon;
 
-      fetch ('http://localhost:8000/citys', {
-        method: 'POST',
-        headers: {"Content-type": "application/json"},
-        body: JSON.stringify({city, country, temp_max, temp_min, icon})
-      })
+      let days = state.forecastData || {};
+      let forecastFilter = [];
+
+      if (!!days.length) {
+        const tomorrow = days[0];
+        const tomorrowDate = new Date(tomorrow.dt * 1000);
+        forecastFilter = days.filter(
+          (day) => new Date(day.dt * 1000).getHours() === tomorrowDate.getHours()
+        );
+      }
+      forecastFilter.shift();
+
+      dispatch(setData(city, country, tempMax, tempMin, icon, forecastFilter));
     }
-    
-    console.log("search", state)
-    
-  }, [city]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.todayWeatherData]);
 
   return (
-    <Box>
-      <form onSubmit={handleSubmit}>
-        <Stack mb={4} spacing={2} direction="row">
-            <TextField
-                  label='Search for a city'
-                  variant='outlined'
-                  color='primary'
-                  fullWidth
-                  required
-              />
-              <Button
-                  type='submit'
-                  variant="outlined"
-                  size="large"
-            >Search</Button>
-        </Stack>
-      </form>
-    </Box> 
-  )
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "10px",
+        alignItems: "stretch",
+      }}
+    >
+      <TextField
+        label="Search for a city"
+        variant="outlined"
+        color="primary"
+        required
+        value={city}
+        onChange={onChangeCity}
+        onKeyDown={onEnterCity}
+        sx={{ flex: "0 1 40%" }}
+      />
+      <Button
+        type="button"
+        variant="outlined"
+        size="large"
+        onClick={handleSubmit}
+      >
+        Search
+      </Button>
+    </Box>
+  );
 }

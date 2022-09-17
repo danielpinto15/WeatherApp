@@ -1,67 +1,73 @@
-import React from 'react';
-import { CardContent, Typography, Card, Box, CardHeader } from "@material-ui/core";
-import CardMedia from '@mui/material/CardMedia';
+import React from "react";
+import { CardContent, Typography, Card, Box, CardHeader } from "@mui/material";
+import CardMedia from "@mui/material/CardMedia";
 import { useSelector } from "react-redux";
-import Masonry from '@mui/lab/Masonry';
 
 export default function Forecast() {
-    const state = useSelector(state => state);
+  const state = useSelector((state) => state);
 
-    let fiveDayforecastList = [];
-    let count = 0;
-    const weekday = ["Sunday","Monday","Tuesday","Thursday","Wednesday","Friday","Saturday"];
+  const weekday = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Thursday",
+    "Wednesday",
+    "Friday",
+    "Saturday",
+  ];
 
-    if (state.data.length > 0) {
-        for(let i = 0; i <= state.data.length - 1; i++){
-            const day = state.data[i];
-            const dayDateSplit = day.dt_txt.split(' ');
-            const dayDate = new Date(dayDateSplit[0]);
-            const dayOfTheWeek = weekday[dayDate.getDay()]
-            
-            if(fiveDayforecastList.length == 0) {
-                fiveDayforecastList.push(day)
-            }
-    
-            for(let j = 0; j < fiveDayforecastList.length; j++) {
-                const listDayDateSplit = fiveDayforecastList[count].dt_txt.split(' ');
-                const listDayDate = new Date(listDayDateSplit[0]);
-                const listdayOfTheWeek = weekday[listDayDate.getDay()]
-                if (dayOfTheWeek != listdayOfTheWeek){
-                    fiveDayforecastList.push(day)
-                    count++
-                }
-            }
-        }
-
-        fiveDayforecastList.shift()
-    }
+  let days = state.forecastData ? state.forecastData : {};
+  let dayFilter = [];
+  if (!!days.length) {
+    const tomorow = days[0];
+    const tomorowDate = new Date(tomorow.dt * 1000);
+    dayFilter = days.filter(
+      (day) => new Date(day.dt * 1000).getHours() === tomorowDate.getHours()
+    );
+  }
 
   return (
-    <Box>
-        <Masonry
-            columns={5}
-            spacing={2}
-        >
-            {fiveDayforecastList.length > 0 && fiveDayforecastList.map((day) => (
-        <Card key={day.dt}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "16px",
+        flexWrap: "wrap",
+        alignItems: "stretch",
+      }}
+    >
+      {Object.entries(dayFilter).length > 0 &&
+        dayFilter.map((day) => (
+          <Card
+            key={day.dt}
+            sx={{
+              backgroundColor: "transparent",
+              margin: "2 0",
+              flex: "0 0 195px",
+            }}
+          >
             <CardHeader
-              style={{ textAlign: 'center' }}
+              style={{ textAlign: "center" }}
               title={weekday[new Date(day.dt_txt).getDay()]}
             />
-          <CardMedia
-            component="img"
-            height="194"
-            image={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
-            alt="Snow"
-          />
-          <CardContent>
-            <Typography variant="body2" style={{ textAlign: 'center' }} color="textSecondary">
-                Max {`${Math.floor(day.main.temp_max)}°C`} Min {`${Math.floor(day.main.temp_min)}°C`}
-            </Typography>
-          </CardContent>
-        </Card>
-      ))}
-        </Masonry>
+            <CardMedia
+              component="img"
+              height="194"
+              image={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+              alt="Snow"
+            />
+            <CardContent>
+              <Typography
+                variant="body2"
+                style={{ textAlign: "center" }}
+                color="textSecondary"
+              >
+                Max {`${Math.floor(day.main.temp_max)}°C`} Min{" "}
+                {`${Math.floor(day.main.temp_min)}°C`}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
     </Box>
-  )
+  );
 }
