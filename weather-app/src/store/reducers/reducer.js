@@ -5,7 +5,8 @@ import {
   DELETE_DATA,
   GET_DATA,
   SET_LOADING,
-} from "../type";
+  GET_CURRENT_LOCATION
+} from '../type';
 
 const initialState = {
   forecastData: null,
@@ -14,6 +15,7 @@ const initialState = {
   isUpdated: false,
   data: null,
   isLoading: false,
+  currentCity: null
 };
 
 export default (state = initialState, action) => {
@@ -25,6 +27,7 @@ export default (state = initialState, action) => {
         todayWeatherData: action.todayWeather,
         isUpdated: false,
         isLoading: false,
+        currentCity: null,
         error: null,
       };
     case SET_DATA:
@@ -54,6 +57,13 @@ export default (state = initialState, action) => {
         ...state,
         isUpdated: false,
         isLoading: action.payload
+      }
+    case GET_CURRENT_LOCATION:
+      return {
+        ...state,
+        currentCity: action.payload,
+        isUpdated: false,
+        isLoading: false,
       }
     case SET_ERROR:
       return {

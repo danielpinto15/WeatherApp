@@ -5,7 +5,8 @@ import {
   DELETE_DATA,
   GET_DATA,
   SET_LOADING,
-} from "../type";
+  GET_CURRENT_LOCATION,
+} from '../type';
 
 export const getWeatherInfo = (city) => {
   return async (dispatch) => {
@@ -17,26 +18,24 @@ export const getWeatherInfo = (city) => {
 
       const forecastRes = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=0f542b1bf770a3513721fe5f2a26b22e`
-      );
-      const forecastResData = await forecastRes.json();
+      ).then((res) => res.json());
 
-      if (!forecastRes.ok) {
-        throw new Error(forecastResData.message);
+      if (forecastRes.message) {
+        throw new Error(forecastRes.message);
       }
 
       const todayWeatherRes = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=0f542b1bf770a3513721fe5f2a26b22e`
-      );
-      const todayWeatherResData = await todayWeatherRes.json();
+      ).then((res) => res.json());
 
-      if (!todayWeatherRes.ok) {
-        throw new Error(todayWeatherResData.message);
+      if (todayWeatherRes.message) {
+        throw new Error(todayWeatherRes.message);
       }
 
       dispatch({
         type: GET_WEATHER_INFO,
-        forecast: forecastResData.list,
-        todayWeather: todayWeatherResData,
+        forecast: forecastRes.list,
+        todayWeather: todayWeatherRes,
       });
     } catch (err) {
       dispatch({
@@ -55,9 +54,9 @@ export const setData = (city, country, tempMax, tempMin, icon, forecast) => {
         payload: true,
       });
 
-      await fetch("http://localhost:8000/citys", {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
+      await fetch('http://localhost:8000/citys', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({
           city,
           country,
@@ -89,8 +88,8 @@ export const deleteData = (id) => {
         payload: true,
       });
 
-      await fetch("http://localhost:8000/citys/" + id, {
-        method: "DELETE",
+      await fetch('http://localhost:8000/citys/' + id, {
+        method: 'DELETE',
       });
 
       dispatch({
@@ -114,16 +113,66 @@ export const getData = () => {
         payload: true,
       });
 
-      const citiesData = await fetch("http://localhost:8000/citys");
-      const cities = await citiesData.json();
+      const citiesData = await fetch('http://localhost:8000/citys').then(
+        (res) => res.json()
+      );
 
-      if (!citiesData.ok) {
-        throw new Error(cities.message);
+      if (citiesData.message) {
+        throw new Error(citiesData.message);
       }
 
       dispatch({
         type: GET_DATA,
-        payload: cities,
+        payload: citiesData,
+      });
+    } catch (err) {
+      dispatch({
+        type: SET_ERROR,
+        payload: err,
+      });
+    }
+  };
+};
+
+export const getCurrentLocation = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: SET_LOADING,
+        payload: true,
+      });
+
+      let latitude, longitude;
+
+      if (navigator.geolocation) {
+        await fetch(
+          navigator.geolocation.getCurrentPosition(
+            success,
+            error
+          )
+        );
+      }
+
+      function success(data) {
+        latitude = data.coords.latitude;
+        longitude = data.coords.longitude;
+      }
+
+      function error(data) {
+        throw new Error(data);
+      }
+
+      const currentCityWeather = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=0f542b1bf770a3513721fe5f2a26b22e`
+      ).then((res) => res.json());
+
+      if (currentCityWeather.message) {
+        throw new Error(currentCityWeather.message);
+      }
+
+      dispatch({
+        type: GET_CURRENT_LOCATION,
+        payload: currentCityWeather.name,
       });
     } catch (err) {
       dispatch({

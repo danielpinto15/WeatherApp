@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Box, Button, TextField } from "@mui/material";
-import { getWeatherInfo, setData } from "../store/actions/actions";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { Box, Button, TextField } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getWeatherInfo,
+  setData,
+  getCurrentLocation,
+} from '../store/actions/actions';
 
 export default function Search() {
   const dispatch = useDispatch();
@@ -9,7 +13,7 @@ export default function Search() {
   const [city, setCity] = useState('');
 
   const onEnterCity = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       dispatch(getWeatherInfo(city));
     }
@@ -19,16 +23,27 @@ export default function Search() {
     setCity(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSearch = () => {
     dispatch(getWeatherInfo(city));
   };
 
+  const handleCurrentLocation = () => {
+    dispatch(getCurrentLocation());
+  };
+
   useEffect(() => {
-    if (state.todayWeatherData != null) {
+    if (state.currentCity) {
+      dispatch(getWeatherInfo(state.currentCity));
+    }
+  }, [state.currentCity]);
+
+  useEffect(() => {
+    if (state.todayWeatherData) {
       const country = state.todayWeatherData.sys.country;
       const tempMax = Math.floor(state.todayWeatherData.main.temp_max);
       const tempMin = Math.floor(state.todayWeatherData.main.temp_min);
       const icon = state.todayWeatherData.weather[0].icon;
+      const city = state.todayWeatherData.name;
 
       let days = state.forecastData || {};
       let forecastFilter = [];
@@ -37,42 +52,55 @@ export default function Search() {
         const tomorrow = days[0];
         const tomorrowDate = new Date(tomorrow.dt * 1000);
         forecastFilter = days.filter(
-          (day) => new Date(day.dt * 1000).getHours() === tomorrowDate.getHours()
+          (day) =>
+            new Date(day.dt * 1000).getHours() === tomorrowDate.getHours()
         );
       }
       forecastFilter.shift();
 
       dispatch(setData(city, country, tempMax, tempMin, icon, forecastFilter));
     }
+
+    setCity('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.todayWeatherData]);
 
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "center",
-        gap: "10px",
-        alignItems: "stretch",
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '10px',
+        alignItems: 'stretch',
       }}
     >
       <TextField
-        label="Search for a city"
-        variant="outlined"
-        color="primary"
+        label='Search for a city'
+        variant='outlined'
+        color='primary'
         required
         value={city}
         onChange={onChangeCity}
         onKeyDown={onEnterCity}
-        sx={{ flex: "0 1 40%" }}
+        sx={{ flex: '0 1 40%' }}
       />
       <Button
-        type="button"
-        variant="outlined"
-        size="large"
-        onClick={handleSubmit}
+        type='button'
+        variant='outlined'
+        size='large'
+        onClick={handleSearch}
+        color='inherit'
       >
         Search
+      </Button>
+      <Button
+        type='button'
+        variant='outlined'
+        size='large'
+        onClick={handleCurrentLocation}
+        color='inherit'
+      >
+        Current Location
       </Button>
     </Box>
   );
