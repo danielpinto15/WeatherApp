@@ -3,10 +3,6 @@ import {
   GET_WEATHER_INFO,
   SET_DATA,
   DELETE_DATA,
-  GET_DATA,
-  SET_LOADING,
-  GET_CURRENT_LOCATION,
-  SET_ERROR,
 } from "../type";
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
