@@ -27,15 +27,16 @@ export default function Weather() {
     'Saturday',
   ];
 
-  //to get data on the first loading
   useEffect(() => {
     dispatch(getData());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (state.isUpdated) {
       dispatch(getData());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isUpdated]);
 
   useEffect(() => {
@@ -43,10 +44,6 @@ export default function Weather() {
       setCities(state.data);
     }
   }, [state.data]);
-
-  const handleDelete = (id) => {
-    dispatch(deleteData(id));
-  };
 
   return (
     <>
@@ -57,9 +54,10 @@ export default function Weather() {
           p: 0.1,
         }}
       >
-        {state.isLoading && <LinearProgress color='inherit' sx={{ width: '69%', margin: '20px' }} />}
+        {state.isLoading && <LinearProgress data-testid='loadingBar' color='inherit' sx={{ width: '69%', margin: '20px' }} />}
       </Box>
       <Box
+        data-testid='weatherCardBox'
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -73,14 +71,14 @@ export default function Weather() {
           cities.map((city, index) => (
             <Card
               key={city.id}
-              sx={{ backgroundColor: 'transparent', m: 2, order: index * -1 }}
+              sx={{ backgroundColor: 'transparent', m: 2, order: index * -1 }}         
             >
               <CardHeader
                 title={city.city}
                 subheader={city.country}
                 action={
                   <IconButton
-                    onClick={() => handleDelete(city.id)}
+                    onClick={() => dispatch(deleteData(city.id))}
                     aria-label='settings'
                   >
                     <DeleteIcon />
@@ -121,6 +119,7 @@ export default function Weather() {
                       <img
                         src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
                         style={{ width: '30px', height: '30px' }}
+                        alt='weather icon'
                       />
                       <Typography
                         variant='body2'

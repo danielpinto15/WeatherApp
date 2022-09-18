@@ -16,25 +16,19 @@ export default function Search() {
     if (e.key === 'Enter') {
       e.preventDefault();
       dispatch(getWeatherInfo(city));
-    }
+    };
   };
 
   const onChangeCity = (e) => {
     setCity(e.target.value);
   };
 
-  const handleSearch = () => {
-    dispatch(getWeatherInfo(city));
-  };
-
-  const handleCurrentLocation = () => {
-    dispatch(getCurrentLocation());
-  };
-
   useEffect(() => {
     if (state.currentCity) {
       dispatch(getWeatherInfo(state.currentCity));
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentCity]);
 
   useEffect(() => {
@@ -44,7 +38,6 @@ export default function Search() {
       const tempMin = Math.floor(state.todayWeatherData.main.temp_min);
       const icon = state.todayWeatherData.weather[0].icon;
       const city = state.todayWeatherData.name;
-
       let days = state.forecastData || {};
       let forecastFilter = [];
 
@@ -83,13 +76,16 @@ export default function Search() {
         onChange={onChangeCity}
         onKeyDown={onEnterCity}
         sx={{ flex: '0 1 40%' }}
+        data-testid='searchBox'
       />
       <Button
         type='button'
         variant='outlined'
         size='large'
-        onClick={handleSearch}
+        onClick={() => dispatch(getWeatherInfo(city))}
         color='inherit'
+        data-testid='searchButton'
+        name='searchButton'
       >
         Search
       </Button>
@@ -97,8 +93,9 @@ export default function Search() {
         type='button'
         variant='outlined'
         size='large'
-        onClick={handleCurrentLocation}
+        onClick={() => dispatch(getCurrentLocation())}
         color='inherit'
+        data-testid='currentLocationButton'
       >
         Current Location
       </Button>

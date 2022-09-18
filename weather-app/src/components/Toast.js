@@ -11,8 +11,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 export default function CustomizedSnackbars() {
   const [open, setOpen] = React.useState(false);
-  const vertical = 'top';
-  const horizontal = 'right';
   const state = useSelector((state) => state);
 
   useEffect(() => {
@@ -26,18 +24,22 @@ export default function CustomizedSnackbars() {
   };
 
   return (
-    <Stack spacing={2} sx={{ width: '100%' }}>
+    <Stack data-testid='toast' spacing={2} sx={{ width: '100%' }}>
       <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={open}
         autoHideDuration={6000}
         onClose={handleClose}
-      > 
+      >
         <Alert
           onClose={handleClose}
-          severity= {state.error ?  'error' : 'success'} 
+          severity={state.error ? 'error' : 'success'}
           sx={{ width: '100%' }}
-        >{state.error ? 'The following error occured: ' + state.error.message : 'Forecast updated'}</Alert>
+        >
+          {state.error
+            ? 'The following error occured: ' + state.error.message
+            : 'Forecast updated'}
+        </Alert>
       </Snackbar>
     </Stack>
   );

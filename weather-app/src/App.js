@@ -4,21 +4,19 @@ import { Container } from '@mui/system';
 import { Box, Typography } from '@material-ui/core';
 import Search from './components/Search';
 import Toast from './components/Toast';
-import { useSelector } from 'react-redux';
 
 function App() {
-  const state = useSelector((state) => state);
-
   return (
     <Container>
       <Toast />
       <Box>
         <Typography
           variant='h2'
-          component='h2'
           color='textPrimary'
           align='center'
           gutterBottom
+          data-testid='header'
+          sx={{fontFamily: 'Lavender' }}
         >
           Weather app
         </Typography>
