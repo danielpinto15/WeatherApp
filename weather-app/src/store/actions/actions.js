@@ -20,7 +20,7 @@ export const getWeatherInfo = (city) => {
     setLoading(dispatch);
 
     await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=0f542b1bf770a3513721fe5f2a26b22e`
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=openweatherkey`
     )
       .then(async (res) => {
         const forecastResJson = await res.json();
@@ -32,7 +32,7 @@ export const getWeatherInfo = (city) => {
       })
       .then(async (forecastResJson) => {
         await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=0f542b1bf770a3513721fe5f2a26b22e`
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=openweatherkey`
         )
           .then(async (res) => {
             const todayWeatherResJson = await res.json();
@@ -164,7 +164,7 @@ export const getCurrentLocation = () => {
 
     const success = async (data) => {
       await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${data.coords.latitude}&lon=${data.coords.longitude}&appid=0f542b1bf770a3513721fe5f2a26b22e`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${data.coords.latitude}&lon=${data.coords.longitude}&appid=openweatherkey`
       )
         .then(async(res) => {
           const resJson = await res.json();
